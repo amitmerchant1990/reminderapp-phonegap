@@ -48,6 +48,30 @@ $('#page-home').live("pageinit", function() {
         });
     });
     
+    $('#aboutApp').click( function() { 
+        $.mobile.changePage($('#about-app'), {
+            transition:"slide"
+        });
+    });
+    
+    $('#aboutApp_new').click( function() { 
+        $.mobile.changePage($('#about-app'), {
+            transition:"slide"
+        });
+    });
+    
+    $('#aboutApp_other').click( function() { 
+        $.mobile.changePage($('#about-app'), {
+            transition:"slide"
+        });
+    });
+    
+    $('#back-to-home').click( function() { 
+        $.mobile.changePage($('#page-home'), {
+            transition:"slide"
+        });
+    });
+    
     $('#save_btn').click( function() { 
       
         if (datetime.val()=="" || datetime.val()==null){
