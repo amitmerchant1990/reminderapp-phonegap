@@ -9,8 +9,8 @@ $('#page-home').live("pageinit", function() {
     var date = null;
     var time = null;
       
-    var start_date='2012-06-01';
-    var end_date='2012-06-30';
+    var start_date='2013-01-01';
+    var end_date='2013-12-30';
       
     var today = new Date();
     var dd = today.getDate();
