@@ -66,7 +66,7 @@ $('#page-home').live("pageinit", function() {
         });
     });
     
-    $('#back-to-home').click( function() { 
+    $('.back-to-home').click( function() { 
         $.mobile.changePage($('#page-home'), {
             transition:"slide"
         });
@@ -90,6 +90,10 @@ $('#page-home').live("pageinit", function() {
 		
         db.transaction(function(tx) {
             tx.executeSql('insert into events (date, time, title, desc) VALUES (?, ?, ?, ?)', [date, time, title.val(), desc.val()]);
+        }, errorCB, successCB_event);
+        
+        db.transaction(function(tx) {
+            tx.executeSql('select * from events where date="'+today+'";', [], displayEvents_refresh);
         }, errorCB, successCB_event);
 	
     });
@@ -137,6 +141,9 @@ $('#page-home').live("pageinit", function() {
                         db.transaction(function(tx) {
                             tx.executeSql('delete from events where title="'+event_title+'";');
                         }); 
+                        db.transaction(function(tx) {
+                            tx.executeSql('select * from events where date="'+today+'";', [], displayEvents_refresh);
+                        }, errorCB, successCB_event);
                     //alert (event_title);
                     }
                 },
@@ -164,7 +171,10 @@ function successCB() {
 }
 
 function successCB_event() {
-    alert("Your Event has been saved!");
+    $.mobile.changePage($('#page-home'), {
+            transition:"slide"
+        });
+    //alert("An event created successfully.")    
 }
 
 
@@ -178,6 +188,36 @@ function displayEvents(tx, rs) {
         e.append('<li data-icon="delete"><a class="event" id="'+r['title']+'" href="#"><h3>'+ r['title'] +'</h3><p>'+r['time']+'</p></a><a id="'+r['title']+'" class="delete" href="#"></a></li>'); 
         $('#eventList').listview('refresh');
     }
+}
+
+function displayEvents_refresh(tx, rs) {
+    $('#eventList li:not(:first)').remove();    
+    e = $('#eventList');
+    
+    if(rs.rows.length==0)
+        e.append('<li>No events today!<li>');
+    $('#eventList').listview('refresh');
+    for(var i=0; i < rs.rows.length; i++) {
+        r = rs.rows.item(i);
+        e.append('<li data-icon="delete"><a class="event" id="'+r['title']+'" href="#"><h3>'+ r['title'] +'</h3><p>'+r['time']+'</p></a><a id="'+r['title']+'" class="delete" href="#"></a></li>'); 
+        $('#eventList').listview('refresh');
+    }
+   
+    var start_date='2013-01-01';
+    var end_date='2013-12-30';
+    tx.executeSql('select * from events where date >= "'+start_date+'" and date <= "'+end_date+'" order by date;', [], function(tx, rse){
+        $('#otherEventList li').remove();
+        e = $('#otherEventList');
+        $('#otherEventList').listview('refresh');
+        for(var i=0; i < rse.rows.length; i++) {
+            re = rse.rows.item(i);
+            e.append('<li data-icon="delete"><a class="event" id="'+re['title']+'" href="#"><h3>'+ re['title'] +'</h3><p>'+re['date']+'<br>'+re['time']+'</p></a><a id="'+re['title']+'" class="delete" href="#"></a></li>'); 
+            $('#otherEventList').listview('refresh');
+        //$('#otherEventList').listview('refresh');
+        }
+        
+    });
+    
 }
 
 
